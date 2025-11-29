@@ -21,6 +21,8 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 body {
@@ -28,12 +30,20 @@ body {
   display: flex;
   min-width: 320px;
   min-height: 100vh;
+  min-height: -webkit-fill-available;
   overflow-x: hidden;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+html {
+  height: -webkit-fill-available;
 }
 
 #root {
   width: 100%;
   min-height: 100vh;
+  min-height: -webkit-fill-available;
 }
 
 /* Custom scrollbar */
@@ -224,14 +234,157 @@ body {
   border-left: 4px solid #8286ef;
 }
 
-/* Responsive utilities */
-@media (max-width: 768px) {
+/* Touch-friendly interactions */
+button, input[type="range"], .cursor-pointer {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Prevent zoom on double tap */
+button, a, input {
+  touch-action: manipulation;
+}
+
+/* Responsive utilities - Mobile First */
+/* Small phones (4-5 inches) - 320px to 480px */
+@media (max-width: 480px) {
+  :root {
+    font-size: 14px;
+  }
+  
   .sidebar {
+    width: 100% !important;
     transform: translateX(-100%);
     transition: transform 0.3s ease-out;
+    position: fixed;
+    z-index: 50;
   }
 
   .sidebar.open {
     transform: translateX(0);
+  }
+  
+  /* Compact controls for small screens */
+  .control-btn {
+    min-width: 36px !important;
+    min-height: 36px !important;
+  }
+  
+  /* Stack buttons vertically on very small screens */
+  .grid-cols-2 {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Medium phones (5-6 inches) - 481px to 640px */
+@media (min-width: 481px) and (max-width: 640px) {
+  .sidebar {
+    width: 240px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-out;
+    position: fixed;
+    z-index: 50;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+}
+
+/* Large phones & foldables (6-7 inches) - 641px to 768px */
+@media (min-width: 641px) and (max-width: 768px) {
+  .sidebar {
+    width: 260px;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-out;
+    position: fixed;
+    z-index: 50;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+}
+
+/* Tablets (8-11 inches) - 769px to 1024px */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .sidebar {
+    width: 280px;
+    position: relative;
+  }
+  
+  /* Better spacing for tablets */
+  .p-8 {
+    padding: 1.5rem !important;
+  }
+}
+
+/* Landscape mode optimizations */
+@media (max-height: 500px) and (orientation: landscape) {
+  .sidebar {
+    width: 200px;
+  }
+  
+  .p-8 {
+    padding: 1rem !important;
+  }
+  
+  .mb-8 {
+    margin-bottom: 1rem !important;
+  }
+  
+  .gap-6 {
+    gap: 0.75rem !important;
+  }
+}
+
+/* Foldable devices specific */
+@media (min-width: 540px) and (max-width: 720px) and (min-height: 720px) {
+  /* Samsung Z Fold, Honor Magic V3 unfolded */
+  .sidebar {
+    width: 260px;
+    position: relative;
+  }
+}
+
+/* iPad Mini & similar (7.9-8.3 inches) */
+@media (min-width: 744px) and (max-width: 834px) {
+  .sidebar {
+    width: 280px;
+    position: relative;
+  }
+}
+
+/* iPad & similar (9.7-11 inches) */
+@media (min-width: 835px) and (max-width: 1194px) {
+  .sidebar {
+    width: 300px;
+    position: relative;
+  }
+}
+
+/* Touch-friendly minimum sizes */
+@media (hover: none) and (pointer: coarse) {
+  /* Touch devices */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  input[type="range"] {
+    min-height: 44px;
+  }
+  
+  .resize-handle {
+    min-width: 12px !important;
+  }
+}
+
+/* High DPI screens */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .waveform-canvas {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
   }
 }

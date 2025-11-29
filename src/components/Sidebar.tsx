@@ -57,51 +57,74 @@ const tools = [
 
 export const Sidebar = ({ currentTool, onToolChange, isOpen, onToggle }: SidebarProps) => {
   return (
-    <aside className={`w-[280px] bg-neutral-900 border-r border-neutral-800 flex flex-col fixed h-screen left-0 top-0 z-50 transition-transform duration-300 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-      <div className="p-6 border-b border-neutral-800">
+    <aside className={`
+      w-full sm:w-[240px] md:w-[260px] lg:w-[280px]
+      bg-neutral-900 border-r border-neutral-800
+      flex flex-col fixed h-screen left-0 top-0 z-50
+      transition-transform duration-300
+      ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+      md:translate-x-0
+    `}>
+      <div className="p-4 sm:p-5 md:p-6 border-b border-neutral-800">
         <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <svg width="28" height="28" viewBox="0 0 32 32" fill="none" className="sm:w-8 sm:h-8">
               <rect width="32" height="32" rx="8" fill="#8286ef"/>
               <circle cx="16" cy="16" r="10" fill="white" fillOpacity="0.15"/>
               <path d="M14 10v12l8-6z" fill="white"/>
               <circle cx="14" cy="16" r="1.5" fill="white"/>
             </svg>
-            <span className="text-xl font-semibold text-primary-500">setsound</span>
+            <span className="text-lg sm:text-xl font-semibold text-primary-500">setsound</span>
           </div>
           
-          {/* Toggle button - Design 2025 minimaliste */}
+          {/* Toggle button - Touch-friendly */}
           <button
             onClick={onToggle}
-            className="w-8 h-8 rounded-lg bg-neutral-800/50 hover:bg-neutral-700/70 backdrop-blur-sm flex items-center justify-center transition-all hover:scale-105"
+            className="w-10 h-10 sm:w-9 sm:h-9 md:w-8 md:h-8 rounded-lg bg-neutral-800/50 hover:bg-neutral-700/70 active:bg-neutral-700 backdrop-blur-sm flex items-center justify-center transition-all hover:scale-105 active:scale-95 md:flex"
             title="Masquer le panneau"
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="sm:w-4 sm:h-4">
               <path d="M10 3L5 8l5 5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
         </div>
       </div>
       
-      <nav className="flex-1 py-6">
+      <nav className="flex-1 py-4 sm:py-5 md:py-6 overflow-y-auto">
         {tools.map((tool) => (
           <button
             key={tool.id}
-            onClick={() => onToolChange(tool.id)}
+            onClick={() => {
+              onToolChange(tool.id);
+              // Auto-close sidebar on mobile after selection
+              if (window.innerWidth < 769) {
+                onToggle();
+              }
+            }}
             className={`
-              w-full flex items-center gap-4 px-6 py-4 
+              w-full flex items-center gap-3 sm:gap-4
+              px-4 sm:px-5 md:px-6
+              py-3 sm:py-3.5 md:py-4
               transition-all duration-200
-              ${currentTool === tool.id 
-                ? 'bg-primary-500 text-white' 
-                : 'text-neutral-400 hover:bg-neutral-800 hover:text-neutral-100'
+              active:scale-95
+              ${currentTool === tool.id
+                ? 'bg-primary-500 text-white shadow-lg'
+                : 'text-neutral-400 hover:bg-neutral-800 hover:text-neutral-100 active:bg-neutral-700'
               }
             `}
           >
-            {tool.icon}
-            <span className="font-medium">{tool.name}</span>
+            <div className="w-5 h-5 sm:w-5 sm:h-5 flex-shrink-0">
+              {tool.icon}
+            </div>
+            <span className="font-medium text-sm sm:text-base">{tool.name}</span>
           </button>
         ))}
       </nav>
+      
+      {/* Version info - Hidden on very small screens */}
+      <div className="hidden sm:block p-4 border-t border-neutral-800 text-xs text-neutral-500 text-center">
+        v2.0.0 • PWA
+      </div>
     </aside>
   );
 };

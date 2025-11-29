@@ -320,33 +320,33 @@ export const AudioJoiner = ({ audioContext }: AudioJoinerProps) => {
   };
 
   return (
-    <div className="flex flex-col h-full p-8" onClick={() => {
+    <div className="flex flex-col h-full p-4 sm:p-6 md:p-8" onClick={() => {
       // Deselect all on outside click
       const newTracks = tracks.map(t => ({ ...t, selectedSegmentId: null }));
       push(newTracks);
     }}>
       {/* Header with Undo/Redo */}
-      <div className="flex items-center justify-between mb-8">
-        <div className="text-center flex-1">
-          <h1 className="text-3xl font-semibold text-neutral-100 mb-2">Fusionneur Audio</h1>
-          <p className="text-neutral-400">Timeline multi-pistes • Ctrl+Z pour annuler</p>
+      <div className="flex flex-col sm:flex-row items-center justify-between mb-4 sm:mb-6 md:mb-8 gap-3">
+        <div className="text-center sm:text-left flex-1 w-full sm:w-auto">
+          <h1 className="text-2xl sm:text-2xl md:text-3xl font-semibold text-neutral-100 mb-1 sm:mb-2">Fusionneur Audio</h1>
+          <p className="text-xs sm:text-sm text-neutral-400">Timeline multi-pistes • Ctrl+Z pour annuler</p>
         </div>
         
         {tracks.length > 0 && (
-          <div className="flex gap-2">
+          <div className="flex gap-2 w-full sm:w-auto justify-center sm:justify-end">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 undo();
               }}
               disabled={!canUndo}
-              className="px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-neutral-100 rounded-lg transition-colors disabled:opacity-30 flex items-center gap-2"
+              className="px-3 sm:px-4 py-2 bg-neutral-900 hover:bg-neutral-800 active:bg-neutral-700 text-neutral-100 rounded-lg transition-colors disabled:opacity-30 flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base min-h-[44px]"
               title="Annuler (Ctrl+Z)"
             >
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2" className="sm:w-[18px] sm:h-[18px]">
                 <path d="M3 9h12M3 9l4-4M3 9l4 4" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              Annuler
+              <span className="hidden sm:inline">Annuler</span>
             </button>
             <button
               onClick={(e) => {
@@ -354,13 +354,13 @@ export const AudioJoiner = ({ audioContext }: AudioJoinerProps) => {
                 redo();
               }}
               disabled={!canRedo}
-              className="px-4 py-2 bg-neutral-900 hover:bg-neutral-800 text-neutral-100 rounded-lg transition-colors disabled:opacity-30 flex items-center gap-2"
+              className="px-3 sm:px-4 py-2 bg-neutral-900 hover:bg-neutral-800 active:bg-neutral-700 text-neutral-100 rounded-lg transition-colors disabled:opacity-30 flex items-center gap-1.5 sm:gap-2 text-sm sm:text-base min-h-[44px]"
               title="Rétablir (Ctrl+Y)"
             >
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="16" height="16" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2" className="sm:w-[18px] sm:h-[18px]">
                 <path d="M15 9H3M15 9l-4-4M15 9l-4 4" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              Rétablir
+              <span className="hidden sm:inline">Rétablir</span>
             </button>
           </div>
         )}
@@ -399,9 +399,9 @@ export const AudioJoiner = ({ audioContext }: AudioJoinerProps) => {
           </div>
         </div>
       ) : (
-        <div className="flex-1 flex flex-col gap-6">
-          {/* Global Controls */}
-          <div className="bg-neutral-900 rounded-xl p-4 flex justify-between items-center">
+        <div className="flex-1 flex flex-col gap-3 sm:gap-4 md:gap-6">
+          {/* Global Controls - Responsive */}
+          <div className="bg-neutral-900 rounded-lg sm:rounded-xl p-3 sm:p-4 flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0">
             <div className="flex items-center gap-4">
               {!isPlaying ? (
                 <button
@@ -432,7 +432,7 @@ export const AudioJoiner = ({ audioContext }: AudioJoinerProps) => {
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex gap-1.5 sm:gap-2 flex-wrap justify-center sm:justify-end w-full sm:w-auto">
               {/* Zoom Controls */}
               <button
                 onClick={() => setZoom(Math.max(zoom / 1.5, 1))}
@@ -760,10 +760,10 @@ const TrackTimeline = ({ track, trackIndex, zoom, globalTime, isPlaying, onCut, 
         </div>
       </div>
 
-      {/* Track Timeline */}
+      {/* Track Timeline - Touch optimized */}
       <div
         ref={containerRef}
-        className="relative h-24 bg-neutral-950 rounded-lg overflow-x-auto overflow-y-hidden cursor-pointer"
+        className="relative h-20 sm:h-24 bg-neutral-950 rounded-lg overflow-x-auto overflow-y-hidden cursor-pointer touch-pan-x"
         onClick={handleTimelineClick}
       >
         <div style={{ width: `${zoom * 100}%`, height: '100%', position: 'relative' }}>
@@ -799,9 +799,9 @@ const TrackTimeline = ({ track, trackIndex, zoom, globalTime, isPlaying, onCut, 
                   marginRight: `${visualGap}px`
                 }}
               >
-                {/* Left resize handle - FUNCTIONAL */}
+                {/* Left resize handle - Touch-friendly */}
                 <div
-                  className="absolute left-0 top-0 bottom-0 w-2 cursor-ew-resize hover:bg-primary-500 hover:bg-opacity-50 z-10"
+                  className="absolute left-0 top-0 bottom-0 w-3 sm:w-2 cursor-ew-resize hover:bg-primary-500 hover:bg-opacity-50 active:bg-primary-500 active:bg-opacity-70 z-10"
                   onMouseDown={(e) => {
                     e.stopPropagation();
                     setResizingSegment({ id: segment.id, edge: 'start' });
@@ -818,9 +818,9 @@ const TrackTimeline = ({ track, trackIndex, zoom, globalTime, isPlaying, onCut, 
                   </div>
                 </div>
 
-                {/* Right resize handle - FUNCTIONAL */}
+                {/* Right resize handle - Touch-friendly */}
                 <div
-                  className="absolute right-0 top-0 bottom-0 w-2 cursor-ew-resize hover:bg-primary-500 hover:bg-opacity-50 z-10"
+                  className="absolute right-0 top-0 bottom-0 w-3 sm:w-2 cursor-ew-resize hover:bg-primary-500 hover:bg-opacity-50 active:bg-primary-500 active:bg-opacity-70 z-10"
                   onMouseDown={(e) => {
                     e.stopPropagation();
                     setResizingSegment({ id: segment.id, edge: 'end' });

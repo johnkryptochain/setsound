@@ -227,34 +227,34 @@ export const AudioRecorder = ({ audioContext }: AudioRecorderProps) => {
   };
 
   return (
-    <div className="flex flex-col h-full p-8 overflow-hidden">
-      {/* Header - Style cohérent */}
-      <div className="text-center mb-6">
-        <h1 className="text-3xl font-semibold text-neutral-100 mb-2">Enregistreur Audio</h1>
-        <p className="text-neutral-400">Enregistrez en haute qualité • Visualisation temps réel</p>
+    <div className="flex flex-col h-full p-4 sm:p-6 md:p-8 overflow-hidden">
+      {/* Header - Responsive */}
+      <div className="text-center mb-4 sm:mb-5 md:mb-6">
+        <h1 className="text-2xl sm:text-2xl md:text-3xl font-semibold text-neutral-100 mb-1 sm:mb-2">Enregistreur Audio</h1>
+        <p className="text-xs sm:text-sm text-neutral-400">Enregistrez en haute qualité • Visualisation temps réel</p>
       </div>
 
-      {/* Main Recording Area - Compact */}
-      <div className="flex flex-col items-center justify-center gap-6 mb-6">
-        {/* Timer Display - Compact */}
-        <div className="text-5xl font-light text-neutral-100 font-mono tracking-wider">
+      {/* Main Recording Area - Responsive */}
+      <div className="flex flex-col items-center justify-center gap-4 sm:gap-5 md:gap-6 mb-4 sm:mb-5 md:mb-6">
+        {/* Timer Display - Responsive */}
+        <div className="text-4xl sm:text-5xl md:text-5xl font-light text-neutral-100 font-mono tracking-wider">
           {formatDuration(recordingTime)}
         </div>
 
-        {/* Visualizer - Compact */}
-        <div className="w-full max-w-lg h-24 rounded-xl overflow-hidden bg-neutral-900">
+        {/* Visualizer - Responsive */}
+        <div className="w-full max-w-lg h-20 sm:h-24 rounded-lg sm:rounded-xl overflow-hidden bg-neutral-900">
           <canvas ref={canvasRef} className="w-full h-full" />
         </div>
 
-        {/* Control Buttons - Compact */}
-        <div className="flex items-center gap-6">
+        {/* Control Buttons - Touch-friendly */}
+        <div className="flex items-center gap-4 sm:gap-5 md:gap-6">
           {!isRecording ? (
             <button
               onClick={startRecording}
-              className="relative w-16 h-16 rounded-full bg-red-500 hover:bg-red-600 transition-all shadow-lg flex items-center justify-center"
+              className="relative w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full bg-red-500 hover:bg-red-600 active:bg-red-700 transition-all shadow-lg flex items-center justify-center touch-manipulation"
             >
               <div className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-20"></div>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="white" className="sm:w-7 sm:h-7 md:w-8 md:h-8">
                 <circle cx="12" cy="12" r="6"/>
               </svg>
             </button>
@@ -263,9 +263,9 @@ export const AudioRecorder = ({ audioContext }: AudioRecorderProps) => {
               {!isPaused ? (
                 <button
                   onClick={pauseRecording}
-                  className="w-12 h-12 rounded-full bg-neutral-800 hover:bg-neutral-700 transition-all flex items-center justify-center"
+                  className="w-14 h-14 sm:w-12 sm:h-12 rounded-full bg-neutral-800 hover:bg-neutral-700 active:bg-neutral-600 transition-all flex items-center justify-center min-h-[44px] min-w-[44px]"
                 >
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="white">
+                  <svg width="22" height="22" viewBox="0 0 20 20" fill="white" className="sm:w-5 sm:h-5">
                     <rect x="6" y="4" width="2.5" height="12" rx="1"/>
                     <rect x="11.5" y="4" width="2.5" height="12" rx="1"/>
                   </svg>
@@ -273,9 +273,9 @@ export const AudioRecorder = ({ audioContext }: AudioRecorderProps) => {
               ) : (
                 <button
                   onClick={resumeRecording}
-                  className="w-12 h-12 rounded-full bg-primary-500 hover:bg-primary-600 transition-all flex items-center justify-center"
+                  className="w-14 h-14 sm:w-12 sm:h-12 rounded-full bg-primary-500 hover:bg-primary-600 active:bg-primary-700 transition-all flex items-center justify-center min-h-[44px] min-w-[44px]"
                 >
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="white">
+                  <svg width="22" height="22" viewBox="0 0 20 20" fill="white" className="sm:w-5 sm:h-5">
                     <path d="M6 4l10 6-10 6V4z"/>
                   </svg>
                 </button>
@@ -283,9 +283,9 @@ export const AudioRecorder = ({ audioContext }: AudioRecorderProps) => {
 
               <button
                 onClick={stopRecording}
-                className="w-16 h-16 rounded-full bg-neutral-800 hover:bg-neutral-700 transition-all flex items-center justify-center border-2 border-red-500"
+                className="w-16 h-16 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-full bg-neutral-800 hover:bg-neutral-700 active:bg-neutral-600 transition-all flex items-center justify-center border-2 border-red-500"
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="white" className="sm:w-7 sm:h-7 md:w-8 md:h-8">
                   <rect x="7" y="7" width="10" height="10" rx="1"/>
                 </svg>
               </button>
@@ -314,17 +314,17 @@ export const AudioRecorder = ({ audioContext }: AudioRecorderProps) => {
         fileName={`recording_${new Date().toISOString().slice(0, 10)}`}
       />
 
-      {/* Recordings List - Compact */}
+      {/* Recordings List - Responsive */}
       {recordings.length > 0 && (
-        <div className="border-t border-neutral-900 pt-4 flex-shrink-0">
-          <h2 className="text-base font-medium text-neutral-100 mb-3">Enregistrements ({recordings.length})</h2>
-          <div className="space-y-2 max-h-[20vh] overflow-y-auto">
+        <div className="border-t border-neutral-900 pt-3 sm:pt-4 flex-shrink-0">
+          <h2 className="text-sm sm:text-base font-medium text-neutral-100 mb-2 sm:mb-3">Enregistrements ({recordings.length})</h2>
+          <div className="space-y-2 max-h-[25vh] sm:max-h-[20vh] overflow-y-auto">
             {recordings.map((recording) => (
               <div
                 key={recording.id}
-                className="flex items-center gap-4 p-4 bg-neutral-900 rounded-xl hover:bg-neutral-800 transition-colors"
+                className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-neutral-900 rounded-lg sm:rounded-xl hover:bg-neutral-800 active:bg-neutral-700 transition-colors"
               >
-                <div className="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 sm:w-10 sm:h-10 rounded-full bg-primary-500 flex items-center justify-center flex-shrink-0 min-w-[40px]">
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="white">
                     <path d="M6 4l10 6-10 6V4z"/>
                   </svg>
@@ -339,10 +339,10 @@ export const AudioRecorder = ({ audioContext }: AudioRecorderProps) => {
                   </div>
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-1.5 sm:gap-2">
                   <button
                     onClick={() => openExportModal(recording.blob, recording.duration)}
-                    className="w-10 h-10 rounded-full bg-neutral-800 hover:bg-[#8286ef] flex items-center justify-center transition-colors"
+                    className="w-11 h-11 sm:w-10 sm:h-10 rounded-full bg-neutral-800 hover:bg-[#8286ef] active:bg-[#6b6fdb] flex items-center justify-center transition-colors min-h-[44px] min-w-[44px] sm:min-h-[40px] sm:min-w-[40px]"
                   >
                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M9 2v10M9 12l-3-3M9 12l3-3" strokeLinecap="round" strokeLinejoin="round"/>
@@ -351,7 +351,7 @@ export const AudioRecorder = ({ audioContext }: AudioRecorderProps) => {
                   </button>
                   <button
                     onClick={() => deleteRecording(recording.id)}
-                    className="w-10 h-10 rounded-full bg-neutral-800 hover:bg-red-600 flex items-center justify-center transition-colors"
+                    className="w-11 h-11 sm:w-10 sm:h-10 rounded-full bg-neutral-800 hover:bg-red-600 active:bg-red-700 flex items-center justify-center transition-colors min-h-[44px] min-w-[44px] sm:min-h-[40px] sm:min-w-[40px]"
                   >
                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M4 4l10 10M14 4L4 14" strokeLinecap="round"/>

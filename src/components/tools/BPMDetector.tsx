@@ -33,10 +33,10 @@ export const BPMDetector = ({ audioContext: _audioContext }: BPMDetectorProps) =
   };
 
   return (
-    <div className="flex flex-col h-full p-8">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-semibold text-neutral-100 mb-2">Détecteur BPM & Ton</h1>
-        <p className="text-neutral-400">Analysez le tempo et la tonalité de vos fichiers audio</p>
+    <div className="flex flex-col h-full p-4 sm:p-6 md:p-8">
+      <div className="text-center mb-4 sm:mb-6 md:mb-8">
+        <h1 className="text-2xl sm:text-2xl md:text-3xl font-semibold text-neutral-100 mb-1 sm:mb-2">Détecteur BPM & Ton</h1>
+        <p className="text-xs sm:text-sm text-neutral-400">Analysez le tempo et la tonalité de vos fichiers audio</p>
       </div>
 
       {!result ? (
@@ -66,26 +66,26 @@ export const BPMDetector = ({ audioContext: _audioContext }: BPMDetectorProps) =
           </div>
         </div>
       ) : (
-        <div className="flex-1 flex flex-col gap-6">
-          <div className="bg-neutral-900 rounded-xl p-8">
-            <h3 className="text-2xl font-semibold text-neutral-100 mb-8 text-center">
+        <div className="flex-1 flex flex-col gap-4 sm:gap-5 md:gap-6">
+          <div className="bg-neutral-900 rounded-lg sm:rounded-xl p-4 sm:p-6 md:p-8">
+            <h3 className="text-xl sm:text-2xl font-semibold text-neutral-100 mb-4 sm:mb-6 md:mb-8 text-center">
               Résultats de l'analyse
             </h3>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-neutral-950 rounded-lg p-6 border border-neutral-700 text-center">
-                <div className="text-sm text-neutral-400 mb-2">Tempo (BPM)</div>
-                <div className="text-6xl font-bold text-primary-500">{result.tempo}</div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6 md:mb-8">
+              <div className="bg-neutral-950 rounded-lg p-4 sm:p-5 md:p-6 border border-neutral-700 text-center">
+                <div className="text-xs sm:text-sm text-neutral-400 mb-1 sm:mb-2">Tempo (BPM)</div>
+                <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-primary-500">{result.tempo}</div>
               </div>
 
-              <div className="bg-neutral-950 rounded-lg p-6 border border-neutral-700 text-center">
-                <div className="text-sm text-neutral-400 mb-2">Tonalité</div>
-                <div className="text-6xl font-bold text-primary-500">{result.key}</div>
+              <div className="bg-neutral-950 rounded-lg p-4 sm:p-5 md:p-6 border border-neutral-700 text-center">
+                <div className="text-xs sm:text-sm text-neutral-400 mb-1 sm:mb-2">Tonalité</div>
+                <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-primary-500">{result.key}</div>
               </div>
 
-              <div className="bg-neutral-950 rounded-lg p-6 border border-neutral-700 text-center">
-                <div className="text-sm text-neutral-400 mb-2">Durée</div>
-                <div className="text-6xl font-bold text-primary-500">
+              <div className="bg-neutral-950 rounded-lg p-4 sm:p-5 md:p-6 border border-neutral-700 text-center">
+                <div className="text-xs sm:text-sm text-neutral-400 mb-1 sm:mb-2">Durée</div>
+                <div className="text-4xl sm:text-5xl md:text-6xl font-bold text-primary-500">
                   {AudioUtils.formatTime(result.duration)}
                 </div>
               </div>
@@ -146,7 +146,7 @@ export const BPMDetector = ({ audioContext: _audioContext }: BPMDetectorProps) =
                 fileInputRef.current.value = '';
               }
             }}
-            className="w-full px-6 py-3 bg-neutral-900 hover:bg-neutral-800 text-neutral-100 rounded-xl transition-colors"
+            className="w-full px-4 sm:px-6 py-3 bg-neutral-900 hover:bg-neutral-800 active:bg-neutral-700 text-neutral-100 rounded-lg sm:rounded-xl transition-colors text-sm sm:text-base min-h-[48px]"
           >
             Analyser un autre fichier
           </button>
