@@ -582,33 +582,38 @@ const TrackTimeline = ({ track, trackIndex, zoom, globalTime, onCut, onDeleteSeg
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [track.selectedSegmentId, onDeleteSegment]);
 
-  // Handle playhead dragging for this track
+  // Handle playhead dragging for this track - Mouse and Touch support
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleMove = (e: MouseEvent | TouchEvent) => {
       if (!isDragging || !containerRef.current) return;
 
       const zoomedDiv = containerRef.current.firstElementChild as HTMLElement;
       if (!zoomedDiv) return;
 
       const rect = zoomedDiv.getBoundingClientRect();
-      const x = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+      const x = Math.max(0, Math.min(clientX - rect.left, rect.width));
       const time = (x / rect.width) * duration;
       
       setLocalTime(Math.max(0, Math.min(time, duration)));
     };
 
-    const handleMouseUp = () => {
+    const handleEnd = () => {
       setIsDragging(false);
     };
 
     if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('mousemove', handleMove as EventListener);
+      document.addEventListener('mouseup', handleEnd);
+      document.addEventListener('touchmove', handleMove as EventListener);
+      document.addEventListener('touchend', handleEnd);
     }
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('mousemove', handleMove as EventListener);
+      document.removeEventListener('mouseup', handleEnd);
+      document.removeEventListener('touchmove', handleMove as EventListener);
+      document.removeEventListener('touchend', handleEnd);
     };
   }, [isDragging, duration]);
 
@@ -815,19 +820,37 @@ const TrackTimeline = ({ track, trackIndex, zoom, globalTime, onCut, onDeleteSeg
             );
           })}
 
-          {/* Playhead for this track - Synchronized with global playback */}
+          {/* Playhead for this track - Touch and Mouse support */}
           <div
             onMouseDown={(e) => {
               e.stopPropagation();
+              e.preventDefault();
               setIsDragging(true);
             }}
-            className="absolute top-0 bottom-0 w-1 bg-yellow-400 z-30 cursor-ew-resize"
+            onTouchStart={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setIsDragging(true);
+            }}
+            className="absolute top-0 bottom-0 w-1 bg-yellow-400 z-30 cursor-ew-resize touch-none"
             style={{
               left: `${(localTime / duration) * 100}%`,
               boxShadow: '0 0 12px rgba(250, 204, 21, 0.9)'
             }}
           >
-            <div className="absolute -top-2 -left-2 w-5 h-5 bg-yellow-400 rounded-full shadow-lg border-2 border-yellow-300 cursor-grab active:cursor-grabbing">
+            <div
+              className="absolute -top-2 -left-2 w-7 h-7 sm:w-5 sm:h-5 bg-yellow-400 rounded-full shadow-lg border-2 border-yellow-300 cursor-grab active:cursor-grabbing touch-none"
+              onMouseDown={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                setIsDragging(true);
+              }}
+              onTouchStart={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                setIsDragging(true);
+              }}
+            >
               <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-black text-yellow-400 text-xs px-2 py-1 rounded font-mono whitespace-nowrap">
                 {AudioUtils.formatTime(localTime)}
               </div>

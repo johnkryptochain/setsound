@@ -16,6 +16,7 @@ export const AudioRecorder = ({ audioContext }: AudioRecorderProps) => {
   const [recordings, setRecordings] = useState<Array<{ id: string; blob: Blob; duration: number; date: Date }>>([]);
   const [showExportModal, setShowExportModal] = useState(false);
   const [selectedRecording, setSelectedRecording] = useState<{ blob: Blob; duration: number } | null>(null);
+  const [playingId, setPlayingId] = useState<string | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const mediaStreamRef = useRef<MediaStream | null>(null);
@@ -24,6 +25,7 @@ export const AudioRecorder = ({ audioContext }: AudioRecorderProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const animationRef = useRef<number>();
+  const audioElementsRef = useRef<Map<string, HTMLAudioElement>>(new Map());
 
   useEffect(() => {
     return () => {
@@ -218,7 +220,45 @@ export const AudioRecorder = ({ audioContext }: AudioRecorderProps) => {
     setShowExportModal(true);
   };
 
+  const playRecording = (id: string, blob: Blob) => {
+    // Stop any currently playing audio
+    audioElementsRef.current.forEach((audio, audioId) => {
+      if (audioId !== id) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+    });
+
+    let audio = audioElementsRef.current.get(id);
+    
+    if (!audio) {
+      audio = new Audio(URL.createObjectURL(blob));
+      audio.onended = () => setPlayingId(null);
+      audioElementsRef.current.set(id, audio);
+    }
+
+    if (playingId === id) {
+      // Pause if already playing
+      audio.pause();
+      setPlayingId(null);
+    } else {
+      // Play
+      audio.play();
+      setPlayingId(id);
+    }
+  };
+
   const deleteRecording = (id: string) => {
+    // Stop and cleanup audio if playing
+    const audio = audioElementsRef.current.get(id);
+    if (audio) {
+      audio.pause();
+      URL.revokeObjectURL(audio.src);
+      audioElementsRef.current.delete(id);
+    }
+    if (playingId === id) {
+      setPlayingId(null);
+    }
     setRecordings(recordings.filter(r => r.id !== id));
   };
 
@@ -327,11 +367,21 @@ export const AudioRecorder = ({ audioContext }: AudioRecorderProps) => {
                 key={recording.id}
                 className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-neutral-900 rounded-lg sm:rounded-xl hover:bg-neutral-800 active:bg-neutral-700 transition-colors"
               >
-                <div className="w-10 h-10 sm:w-10 sm:h-10 rounded-full bg-primary-500 flex items-center justify-center flex-shrink-0 min-w-[40px]">
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="white">
-                    <path d="M6 4l10 6-10 6V4z"/>
-                  </svg>
-                </div>
+                <button
+                  onClick={() => playRecording(recording.id, recording.blob)}
+                  className="w-10 h-10 sm:w-10 sm:h-10 rounded-full bg-primary-500 hover:bg-primary-600 active:bg-primary-700 flex items-center justify-center flex-shrink-0 min-w-[40px] transition-colors"
+                >
+                  {playingId === recording.id ? (
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="white">
+                      <rect x="6" y="4" width="2.5" height="12" rx="1"/>
+                      <rect x="11.5" y="4" width="2.5" height="12" rx="1"/>
+                    </svg>
+                  ) : (
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="white">
+                      <path d="M6 4l10 6-10 6V4z"/>
+                    </svg>
+                  )}
+                </button>
 
                 <div className="flex-1 min-w-0">
                   <div className="text-neutral-100 font-medium truncate">

@@ -79,32 +79,38 @@ export const AudioCutter = ({ audioContext }: AudioCutterProps) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedSegmentId]);
 
-  // Handle playhead dragging
+  // Handle playhead dragging - Mouse and Touch support
   useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
+    const handleMove = (e: MouseEvent | TouchEvent) => {
       if (!isDraggingPlayhead || !waveformContainerRef.current || !audioBuffer) return;
 
       const container = waveformContainerRef.current;
       const scrollLeft = container.scrollLeft;
       const rect = container.getBoundingClientRect();
-      const x = Math.max(0, Math.min(e.clientX - rect.left + scrollLeft, rect.width * zoom));
+      
+      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+      const x = Math.max(0, Math.min(clientX - rect.left + scrollLeft, rect.width * zoom));
       const time = (x / (rect.width * zoom)) * duration;
       
       seek(Math.max(0, Math.min(time, duration)));
     };
 
-    const handleMouseUp = () => {
+    const handleEnd = () => {
       setIsDraggingPlayhead(false);
     };
 
     if (isDraggingPlayhead) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('mousemove', handleMove as EventListener);
+      document.addEventListener('mouseup', handleEnd);
+      document.addEventListener('touchmove', handleMove as EventListener);
+      document.addEventListener('touchend', handleEnd);
     }
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('mousemove', handleMove as EventListener);
+      document.removeEventListener('mouseup', handleEnd);
+      document.removeEventListener('touchmove', handleMove as EventListener);
+      document.removeEventListener('touchend', handleEnd);
     };
   }, [isDraggingPlayhead, duration, zoom, audioBuffer, seek]);
 
@@ -377,8 +383,9 @@ export const AudioCutter = ({ audioContext }: AudioCutterProps) => {
     seek(Math.max(0, Math.min(clickTime, duration)));
   };
 
-  const handlePlayheadMouseDown = (e: React.MouseEvent) => {
+  const handlePlayheadMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     setIsDraggingPlayhead(true);
   };
 
@@ -592,19 +599,21 @@ export const AudioCutter = ({ audioContext }: AudioCutterProps) => {
                   );
                 })}
 
-                {/* Playhead - DRAGGABLE - Plus visible */}
+                {/* Playhead - DRAGGABLE - Touch and Mouse support */}
                 <div
                   onMouseDown={handlePlayheadMouseDown}
-                  className="absolute top-0 bottom-0 w-1 bg-yellow-400 z-30 cursor-ew-resize"
+                  onTouchStart={handlePlayheadMouseDown}
+                  className="absolute top-0 bottom-0 w-1 bg-yellow-400 z-30 cursor-ew-resize touch-none"
                   style={{
                     left: `${(currentTime / duration) * 100}%`,
                     boxShadow: '0 0 16px rgba(250, 204, 21, 1), 0 0 32px rgba(250, 204, 21, 0.5)'
                   }}
                 >
-                  {/* Gros rond draggable en haut */}
+                  {/* Gros rond draggable en haut - Touch-friendly */}
                   <div
-                    className="absolute -top-3 -left-3 w-7 h-7 bg-yellow-400 rounded-full shadow-2xl border-3 border-yellow-200 cursor-grab active:cursor-grabbing hover:scale-110 transition-transform"
+                    className="absolute -top-3 -left-3 w-9 h-9 sm:w-7 sm:h-7 bg-yellow-400 rounded-full shadow-2xl border-3 border-yellow-200 cursor-grab active:cursor-grabbing hover:scale-110 transition-transform touch-none"
                     onMouseDown={handlePlayheadMouseDown}
+                    onTouchStart={handlePlayheadMouseDown}
                   >
                     {/* Time tooltip inside */}
                     <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-yellow-400 text-xs px-2 py-1 rounded font-mono whitespace-nowrap shadow-lg">
