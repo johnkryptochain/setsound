@@ -145,6 +145,57 @@ export class AudioUtils {
     return mergedBuffer;
   }
 
+  static async mixAudioBuffers(buffers: AudioBuffer[]): Promise<AudioBuffer> {
+    if (buffers.length === 0) {
+      throw new Error('No buffers to mix');
+    }
+
+    const audioContext = new AudioContext();
+    const sampleRate = buffers[0].sampleRate;
+    const numberOfChannels = Math.max(...buffers.map(b => b.numberOfChannels));
+    
+    // Find the longest buffer duration
+    const maxLength = Math.max(...buffers.map(b => b.length));
+
+    const mixedBuffer = audioContext.createBuffer(
+      numberOfChannels,
+      maxLength,
+      sampleRate
+    );
+
+    // Mix all buffers together (parallel, not sequential)
+    for (const buffer of buffers) {
+      for (let channel = 0; channel < numberOfChannels; channel++) {
+        const outputData = mixedBuffer.getChannelData(channel);
+        const inputData = buffer.getChannelData(Math.min(channel, buffer.numberOfChannels - 1));
+        
+        for (let i = 0; i < buffer.length; i++) {
+          // Add samples together (mixing)
+          outputData[i] = (outputData[i] || 0) + inputData[i];
+        }
+      }
+    }
+
+    // Normalize to prevent clipping
+    for (let channel = 0; channel < numberOfChannels; channel++) {
+      const data = mixedBuffer.getChannelData(channel);
+      let peak = 0;
+      
+      for (let i = 0; i < maxLength; i++) {
+        peak = Math.max(peak, Math.abs(data[i]));
+      }
+      
+      if (peak > 1.0) {
+        const gain = 1.0 / peak;
+        for (let i = 0; i < maxLength; i++) {
+          data[i] *= gain;
+        }
+      }
+    }
+
+    return mixedBuffer;
+  }
+
   static async normalizeAudioBuffer(audioBuffer: AudioBuffer): Promise<AudioBuffer> {
     const audioContext = new AudioContext();
     const newBuffer = audioContext.createBuffer(

@@ -41,27 +41,37 @@ export const AudioJoiner = ({ audioContext }: AudioJoinerProps) => {
       }
     });
 
-  // Merge all tracks when they change
+  // Mix all tracks when they change - Optimized for mobile
   useEffect(() => {
     if (tracks.length > 0) {
-      mergeTracks();
+      // Debounce to avoid too many re-renders on mobile
+      const timeoutId = setTimeout(() => {
+        mixTracks();
+      }, 100);
+      
+      return () => clearTimeout(timeoutId);
     }
   }, [tracks]);
 
-  const mergeTracks = async () => {
+  const mixTracks = async () => {
     try {
+      setIsProcessing(true);
       const allBuffers: AudioBuffer[] = [];
       
+      // First, merge segments within each track (sequential)
       for (const track of tracks) {
         const trackBuffers = track.segments.map(seg => seg.buffer);
         const trackMerged = await AudioUtils.mergeAudioBuffers(trackBuffers);
         allBuffers.push(trackMerged);
       }
       
-      const final = await AudioUtils.mergeAudioBuffers(allBuffers);
+      // Then, MIX all tracks together (parallel - toutes les pistes ensemble)
+      const final = await AudioUtils.mixAudioBuffers(allBuffers);
       setMergedBuffer(final);
+      setIsProcessing(false);
     } catch (error) {
-      console.error('Error merging tracks:', error);
+      console.error('Error mixing tracks:', error);
+      setIsProcessing(false);
     }
   };
 
