@@ -77,10 +77,10 @@ export const Sidebar = ({ currentTool, onToolChange, isOpen, onToggle }: Sidebar
             <span className="text-lg sm:text-xl font-semibold text-primary-500">setsound</span>
           </div>
           
-          {/* Toggle button - Touch-friendly */}
+          {/* Toggle button - Touch-friendly - Always visible */}
           <button
             onClick={onToggle}
-            className="w-10 h-10 sm:w-9 sm:h-9 md:w-8 md:h-8 rounded-lg bg-neutral-800/50 hover:bg-neutral-700/70 active:bg-neutral-700 backdrop-blur-sm flex items-center justify-center transition-all hover:scale-105 active:scale-95 md:flex"
+            className="w-10 h-10 sm:w-9 sm:h-9 md:w-8 md:h-8 rounded-lg bg-neutral-800/50 hover:bg-neutral-700/70 active:bg-neutral-700 backdrop-blur-sm flex items-center justify-center transition-all hover:scale-105 active:scale-95"
             title="Masquer le panneau"
           >
             <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="sm:w-4 sm:h-4">
@@ -121,9 +121,9 @@ export const Sidebar = ({ currentTool, onToolChange, isOpen, onToggle }: Sidebar
         ))}
       </nav>
       
-      {/* Version info - Hidden on very small screens */}
+      {/* Copyright - Hidden on very small screens */}
       <div className="hidden sm:block p-4 border-t border-neutral-800 text-xs text-neutral-500 text-center">
-        v2.0.0 • PWA
+        © 2025 Jema Technology
       </div>
     </aside>
   );
