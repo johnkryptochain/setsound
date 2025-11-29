@@ -1,0 +1,14 @@
+<svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="192" height="192" rx="48" fill="#8286ef"/>
+  
+  <!-- Waveform -->
+  <path d="M40 96 L50 80 L60 100 L70 70 L80 110 L90 85 L100 105 L110 75 L120 95 L130 90 L140 100 L150 85" 
+        stroke="white" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+  
+  <!-- Play button circle -->
+  <circle cx="96" cy="96" r="36" fill="white"/>
+  
+  <!-- Play triangle -->
+  <path d="M88 80 L88 112 L116 96 Z" fill="#8286ef"/>
+</svg>
