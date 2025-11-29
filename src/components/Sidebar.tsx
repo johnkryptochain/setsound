@@ -62,7 +62,7 @@ export const Sidebar = ({ currentTool, onToolChange, isOpen, onToggle }: Sidebar
       bg-neutral-900 border-r border-neutral-800
       flex flex-col fixed h-screen left-0 top-0 z-50
       transition-transform duration-300
-      ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+      ${isOpen ? 'translate-x-0' : '-translate-x-full'}
     `}>
       <div className="p-4 sm:p-5 md:p-6 border-b border-neutral-800">
         <div className="flex items-center justify-between gap-3">
