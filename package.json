@@ -10,9 +10,11 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "@ffmpeg/ffmpeg": "^0.12.15",
+    "@ffmpeg/util": "^0.12.2",
+    "lamejs": "^1.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "lamejs": "^1.2.1",
     "web-audio-beat-detector": "^8.0.0"
   },
   "devDependencies": {

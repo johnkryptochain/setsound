@@ -1,7 +1,7 @@
 // Copyright (c) 2025 Jema Technology.
 // Distributed under the license specified in the root directory of this project.
 
-export type ToolType = 'cutter' | 'joiner' | 'bpm' | 'recorder';
+export type ToolType = 'cutter' | 'joiner' | 'bpm' | 'recorder' | 'converter' | 'compressor';
 
 export interface AudioTrack {
   id: string;

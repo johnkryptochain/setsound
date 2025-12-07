@@ -1,6 +1,8 @@
 // Copyright (c) 2025 Jema Technology.
 // Distributed under the license specified in the root directory of this project.
 
+import { needsConversion, convertToWav, type ProgressCallback } from './audioConverter';
+
 export class AudioUtils {
   static formatTime(seconds: number): string {
     const mins = Math.floor(seconds / 60);
@@ -8,31 +10,85 @@ export class AudioUtils {
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }
 
-  static async loadAudioFile(file: File): Promise<AudioBuffer> {
-    const arrayBuffer = await file.arrayBuffer();
+  /**
+   * Load an audio file and decode it to an AudioBuffer.
+   * Automatically converts unsupported formats (like WMA) using FFmpeg.wasm.
+   *
+   * @param file - The audio file to load
+   * @param onConversionProgress - Optional callback for conversion progress updates
+   * @returns Promise resolving to the decoded AudioBuffer
+   */
+  static async loadAudioFile(
+    file: File,
+    onConversionProgress?: ProgressCallback
+  ): Promise<AudioBuffer> {
+    let fileToProcess: File | Blob = file;
+    
+    // Check if the file format needs conversion
+    if (needsConversion(file)) {
+      try {
+        onConversionProgress?.({ progress: 0, message: 'Converting audio format...' });
+        const convertedBlob = await convertToWav(file, onConversionProgress);
+        fileToProcess = convertedBlob;
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown conversion error';
+        throw new Error(`Failed to convert audio file: ${errorMessage}. The file format may not be supported.`);
+      }
+    }
+    
+    const arrayBuffer = await fileToProcess.arrayBuffer();
     const audioContext = new AudioContext();
-    return await audioContext.decodeAudioData(arrayBuffer);
+    
+    try {
+      return await audioContext.decodeAudioData(arrayBuffer);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown decoding error';
+      throw new Error(`Failed to decode audio file: ${errorMessage}. The file may be corrupted or in an unsupported format.`);
+    }
   }
 
   static generateWaveformData(audioBuffer: AudioBuffer, width: number): Float32Array {
     const rawData = audioBuffer.getChannelData(0);
-    const samples = width;
+    const samples = Math.min(width, 2000); // Cap samples for performance
     const blockSize = Math.floor(rawData.length / samples);
     const filteredData = new Float32Array(samples);
+
+    // Use a more efficient sampling approach
+    // For very large audio files, skip samples instead of averaging all
+    const skipFactor = blockSize > 1000 ? Math.floor(blockSize / 100) : 1;
+    const samplesPerBlock = Math.ceil(blockSize / skipFactor);
+
+    let maxValue = 0;
 
     for (let i = 0; i < samples; i++) {
       const blockStart = blockSize * i;
       let sum = 0;
-      for (let j = 0; j < blockSize; j++) {
-        sum += Math.abs(rawData[blockStart + j] || 0);
+      let count = 0;
+      
+      // Sample every skipFactor-th sample for performance
+      for (let j = 0; j < blockSize && count < samplesPerBlock; j += skipFactor) {
+        const idx = blockStart + j;
+        if (idx < rawData.length) {
+          sum += Math.abs(rawData[idx]);
+          count++;
+        }
       }
-      filteredData[i] = sum / blockSize;
+      
+      const avg = count > 0 ? sum / count : 0;
+      filteredData[i] = avg;
+      
+      // Track max for normalization (avoid spread operator on large arrays)
+      if (avg > maxValue) {
+        maxValue = avg;
+      }
     }
 
-    // Normalize
-    const max = Math.max(...Array.from(filteredData));
-    for (let i = 0; i < filteredData.length; i++) {
-      filteredData[i] = filteredData[i] / max;
+    // Normalize using tracked max value (much faster than Math.max(...array))
+    if (maxValue > 0) {
+      const normalizer = 1 / maxValue;
+      for (let i = 0; i < samples; i++) {
+        filteredData[i] *= normalizer;
+      }
     }
 
     return filteredData;

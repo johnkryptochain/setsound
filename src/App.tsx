@@ -7,6 +7,8 @@ import { AudioCutter } from './components/tools/AudioCutter';
 import { AudioJoiner } from './components/tools/AudioJoiner';
 import { BPMDetector } from './components/tools/BPMDetector';
 import { AudioRecorder } from './components/tools/AudioRecorder';
+import { AudioConverter } from './components/tools/AudioConverter';
+import { AudioCompressor } from './components/tools/AudioCompressor';
 import { ToolType } from './types';
 import { useAudioContext } from './hooks/useAudioContext';
 
@@ -43,6 +45,10 @@ function App() {
         return <BPMDetector audioContext={audioContext} />;
       case 'recorder':
         return <AudioRecorder audioContext={audioContext} />;
+      case 'converter':
+        return <AudioConverter audioContext={audioContext} />;
+      case 'compressor':
+        return <AudioCompressor audioContext={audioContext} />;
       default:
         return <AudioCutter audioContext={audioContext} />;
     }

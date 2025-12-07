@@ -62,7 +62,7 @@ export const BPMDetector = ({ audioContext: _audioContext }: BPMDetectorProps) =
             <input
               ref={fileInputRef}
               type="file"
-              accept="audio/*"
+              accept="audio/*,.wma,audio/x-ms-wma"
               onChange={handleFileSelect}
               className="hidden"
             />

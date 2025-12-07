@@ -55,6 +55,27 @@ const tools = [
         <path d="M10 13v4M7 17h6" strokeLinecap="round"/>
       </svg>
     )
+  },
+  {
+    id: 'converter' as ToolType,
+    name: 'Convertisseur',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <path d="M4 10h12M12 6l4 4-4 4" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M16 10H4M8 14l-4-4 4-4" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    )
+  },
+  {
+    id: 'compressor' as ToolType,
+    name: 'Compresseur',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5">
+        <rect x="3" y="6" width="14" height="8" rx="1" strokeLinecap="round"/>
+        <path d="M7 6V4M13 6V4M7 14v2M13 14v2" strokeLinecap="round"/>
+        <path d="M6 10h8M8 8v4M12 8v4" strokeLinecap="round"/>
+      </svg>
+    )
   }
 ];
 

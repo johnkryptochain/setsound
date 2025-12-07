@@ -58,5 +58,23 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src')
     }
+  },
+  // Required headers for FFmpeg.wasm SharedArrayBuffer support
+  server: {
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp'
+    }
+  },
+  // Also set headers for preview/production builds
+  preview: {
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp'
+    }
+  },
+  // Optimize FFmpeg.wasm dependencies
+  optimizeDeps: {
+    exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util']
   }
 })

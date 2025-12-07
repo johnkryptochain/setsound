@@ -9,6 +9,7 @@ import { useAudioPlayer } from '@/hooks/useAudioPlayer';
 import { useHistory } from '@/hooks/useHistory';
 import { AudioSegment, CutterHistoryState } from '@/types';
 import { ExportModal } from '@/components/ExportModal';
+// Note: needsConversion is handled internally by AudioUtils.loadAudioFile
 
 interface AudioCutterProps {
   audioContext: AudioContext;
@@ -196,7 +197,11 @@ export const AudioCutter = ({ audioContext }: AudioCutterProps) => {
 
     try {
       setIsProcessing(true);
+      
+      // AudioUtils.loadAudioFile handles conversion internally if needed
+      // No need to check needsConversion() separately - this matches AudioJoiner behavior
       const buffer = await AudioUtils.loadAudioFile(file);
+      
       setAudioBuffer(buffer);
       setFileName(file.name);
       
@@ -213,8 +218,11 @@ export const AudioCutter = ({ audioContext }: AudioCutterProps) => {
       setIsProcessing(false);
     } catch (error) {
       console.error('Error loading file:', error);
-      alert('Erreur lors du chargement du fichier');
       setIsProcessing(false);
+      
+      // Show user-friendly error message
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      alert(`Erreur lors du chargement du fichier: ${errorMessage}`);
     }
   };
 
@@ -452,7 +460,7 @@ export const AudioCutter = ({ audioContext }: AudioCutterProps) => {
             <input
               ref={fileInputRef}
               type="file"
-              accept="audio/*"
+              accept="audio/*,.mp3,.wav,.ogg,.flac,.aac,.m4a,.wma,.aiff,.aif,.opus,.webm,.amr,.3gp,.caf,.mid,.midi,.ra,.rm,.au,.snd,.mka,.oga,.spx,.wv,.ape,.ac3,.dts,.alac,audio/mpeg,audio/wav,audio/wave,audio/x-wav,audio/ogg,audio/flac,audio/aac,audio/mp4,audio/x-m4a,audio/x-ms-wma,audio/aiff,audio/x-aiff,audio/opus,audio/webm,audio/amr,audio/3gpp,audio/x-caf,audio/midi,audio/x-midi,audio/x-realaudio,audio/basic,audio/x-matroska,audio/x-speex,audio/x-wavpack,audio/x-ape,audio/ac3,audio/x-dts,audio/x-alac"
               onChange={handleFileSelect}
               className="hidden"
             />
@@ -710,7 +718,7 @@ export const AudioCutter = ({ audioContext }: AudioCutterProps) => {
 
       {isProcessing && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-neutral-900 rounded-xl p-8 text-center">
+          <div className="bg-neutral-900 rounded-xl p-8 text-center max-w-md mx-4">
             <div className="spinner mx-auto mb-4"></div>
             <p className="text-neutral-100">Traitement en cours...</p>
           </div>
